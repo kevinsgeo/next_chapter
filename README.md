@@ -26,10 +26,10 @@ NextChapter is a mobile-first Android app that allows users to swap books based 
 NextChapter offers an eco-friendly, budget-conscious solution for readers who want to access new books without buying them. It builds a community of trusted swappers and emphasizes sustainability while providing a personalized book recommendation experience.
 
 #### Target Audience:
-- Students looking to swap textbooks.
-- Avid readers wanting to trade fiction/non-fiction books.
-- Eco-conscious users who care about sustainability.
-- Local communities looking for a way to share resources.
+- Students looking to swap textbooks
+- Avid readers wanting to trade fiction/non-fiction books
+- Eco-conscious users who care about sustainability
+- Local communities looking for a way to share resources
 
 We will interact with these users to gather feedback throughout the development process, ensuring the app is user-friendly and meets their needs.
 
