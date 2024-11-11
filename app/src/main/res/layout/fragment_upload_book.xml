@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/upload_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UploadBookFragment">
+
+    <!-- Upload Photo Button -->
+    <Button
+        android:id="@+id/upload_photo_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:text="Upload Photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Scan ISBN Button -->
+    <Button
+        android:id="@+id/scan_isbn_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Scan ISBN Barcode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upload_photo_button" />
+
+    <!-- Close Button -->
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Close Button"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Chat Button -->
+    <ImageButton
+        android:id="@+id/chaticon"
+        android:layout_width="28dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Chat Button"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:srcCompat="@android:drawable/stat_notify_chat" />
+
+    <!-- Map Button -->
+    <ImageButton
+        android:id="@+id/mapicon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Map Button"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toEndOf="@id/chaticon"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:srcCompat="@android:drawable/ic_dialog_map" />
+
+    <!-- Camera Button -->
+    <ImageButton
+        android:id="@+id/menu"
+        android:layout_width="69dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="60dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Camera Button"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toEndOf="@id/mapicon"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+    <!-- Profile Button -->
+    <ImageView
+        android:id="@+id/profile"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Profile Button"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:srcCompat="@drawable/profile_removebg_preview" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
