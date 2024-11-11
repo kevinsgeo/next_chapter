@@ -1,3 +1,38 @@
 <resources>
+    <string name="swap_books_near_you">Swap books with people near you</string>
+    <string name="chat_with_people">Chat with people you want to swap books with</string>
+    <string name="enable_location_to_see_books">Enable location to see books near you</string>
+    <string name="enable_location">Enable Location</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+
+    <!-- Content descriptions for accessibility -->
+    <string name="swap_books_image">Image showing book swapping feature</string>
+    <string name="chat_image">Image showing chat feature</string>
+    <string name="location_image">Image showing location feature</string>
+    <string name="title_activity_settings">SettingsActivity</string>
     <string name="app_name">NextChapter</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="settings_title">Settings</string>
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <string name="push_notifications">Push Notifications</string>
+    <string name="enable_push_notifications">Enable Push Notifications</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="enable_notifications_matches">Enable Notifications for Wishlist Matches</string>
+    <string name="enable_notifications_messages">Enable Notifications for Messages</string>
+    <string name="search_distance">Search Distance (km)</string>
+    <string name="distance_value_placeholder">Current distance: 10 km</string>
 </resources>

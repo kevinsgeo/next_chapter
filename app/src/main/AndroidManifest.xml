@@ -13,6 +13,15 @@
         android:theme="@style/Theme.NextChapter"
         tools:targetApi="31">
         <activity
+            android:name=".Onboarding2"
+            android:exported="false" />
+        <activity
+            android:name=".Onboarding1"
+            android:exported="false" />
+        <activity
+            android:name=".Onboarding0"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
