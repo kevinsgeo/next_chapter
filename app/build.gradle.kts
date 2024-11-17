@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.cs407.next_chapter"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.cs407.next_chapter"
