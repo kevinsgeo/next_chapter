@@ -1,6 +1,5 @@
 package com.cs407.next_chapter
-import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.fillMaxSize
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -8,97 +7,91 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 
 data class BottomNavigationItem(
+    val route: String,
     val title: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 )
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun NavigationBar() {
+fun NavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavigationItem(
+            route = "map",
             title = "Map",
             selectedIcon = ImageVector.vectorResource(R.drawable.baseline_map_24),
             unselectedIcon = ImageVector.vectorResource(R.drawable.outline_map_24)
         ),
         BottomNavigationItem(
+            route = "chat",
             title = "Chat",
             selectedIcon = ImageVector.vectorResource(R.drawable.baseline_chat_24),
             unselectedIcon = ImageVector.vectorResource(R.drawable.outline_chat_24)
         ),
         BottomNavigationItem(
+            route = "home",
             title = "Home",
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home
         ),
         BottomNavigationItem(
+            route = "upload",
             title = "Upload",
             selectedIcon = ImageVector.vectorResource(R.drawable.baseline_photo_camera_24),
             unselectedIcon = ImageVector.vectorResource(R.drawable.outline_photo_camera_24)
         ),
         BottomNavigationItem(
+            route = "profile",
             title = "Profile",
             selectedIcon = Icons.Filled.Person,
             unselectedIcon = Icons.Outlined.Person
         )
     )
 
-    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
+    val currentBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry.value?.destination?.route
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Scaffold(
-            bottomBar = {
-                NavigationBar {
-                    items.forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            selected = selectedItemIndex == index,
-                            onClick = {
-                                selectedItemIndex = index
-                                // TODO:
-                                // Add navcontroller for navigating between screens
-                            },
-                            label = {
-                                Text(text = item.title)
-                            },
-                            alwaysShowLabel = false,
-                            icon = {
-                                BadgedBox(
-                                    badge = {}
-                                ) {
-                                    Icon(
-                                        imageVector = if (index == selectedItemIndex) {
-                                            item.selectedIcon
-                                        } else item.unselectedIcon,
-                                        contentDescription = item.title
-                                    )
-                                }
-                            }
+    NavigationBar {
+        items.forEach { item ->
+            NavigationBarItem(
+                selected = currentRoute == item.route,
+                onClick = {
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                },
+                label = {
+                    Text(text = item.title)
+                },
+                alwaysShowLabel = false,
+                icon = {
+                    BadgedBox(
+                        badge = {}
+                    ) {
+                        Icon(
+                            imageVector = if (currentRoute == item.route) {
+                                item.selectedIcon
+                            } else item.unselectedIcon,
+                            contentDescription = item.title
                         )
                     }
                 }
-            }
-        ) {
-            // It parameter unused
+            )
         }
     }
 }
+
