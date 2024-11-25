@@ -1,3 +1,4 @@
+/*
 package com.cs407.next_chapter.ui.theme
 
 import android.app.Activity
@@ -12,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
+    primary = DarkerPurple80,
     secondary = PurpleGrey80,
     tertiary = Pink80
 )
@@ -49,6 +50,41 @@ fun Next_chapterTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}
+ */
+package com.cs407.next_chapter.ui.theme
+
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+
+// Dark Theme Color Scheme
+private val DarkColorScheme = darkColorScheme(
+    primary = DarkerPurple40,
+    secondary = DarkerPurpleGrey40,
+    tertiary = DarkerPink40
+)
+
+// Light Theme Color Scheme
+private val LightColorScheme = lightColorScheme(
+    primary = DarkerPurple80,
+    secondary = DarkerPurpleGrey80,
+    tertiary = DarkerPink80
+)
+
+@Composable
+fun Next_chapterTheme(
+    darkTheme: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
