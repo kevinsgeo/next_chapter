@@ -1,3 +1,7 @@
+// build.gradle.kts (app-level)
+
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -18,6 +22,16 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Load secrets.properties
+        val properties = Properties()
+        val propertiesFile = rootProject.file("secrets.properties")
+        if (propertiesFile.exists()) {
+            properties.load(propertiesFile.inputStream())
+        }
+
+        // Set manifest placeholder for API key
+        manifestPlaceholders["MAPS_API_KEY"] = properties.getProperty("MAPS_API_KEY", "")
     }
 
     buildTypes {
@@ -69,6 +83,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // splash api
+    // Splash API
     implementation(libs.androidx.core.splashscreen)
+
+    // Google Maps Dependencies
+    implementation("com.google.android.gms:play-services-maps:18.1.0") // Google Maps SDK
+    implementation("com.google.maps.android:maps-compose:2.11.3") // Maps Compose
+    implementation("com.google.accompanist:accompanist-permissions:0.30.1") // For handling permissions
 }
