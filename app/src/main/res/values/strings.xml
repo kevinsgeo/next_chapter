@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">next_chapter</string>
+    <string name="api_key">69vq2gdxsddj</string>
+    <string name="jwt_token">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibmV4dGNoYXB0ZXI0MDcifQ.SIc9JtsH813C6z1s6jl9UCNZXYkitL3h2aFN_lBQ5GU</string>
 </resources>

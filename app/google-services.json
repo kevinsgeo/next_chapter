@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "407475704125",
+    "project_id": "nextchapter-56a50",
+    "storage_bucket": "nextchapter-56a50.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407475704125:android:70e9dea5500a54e70f3554",
+        "android_client_info": {
+          "package_name": "com.cs407.next_chapter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsXBVYksBj5RDWio-obxWseV-31UFiwpg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

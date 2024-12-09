@@ -45,8 +45,8 @@ fun NavigationBar(navController: NavController) {
             unselectedIcon = Icons.Outlined.Home
         ),
         BottomNavigationItem(
-            route = "upload",
-            title = "Upload",
+            route = "scan_isbn", // Removed timestamp
+            title = "Scan",
             selectedIcon = ImageVector.vectorResource(R.drawable.baseline_photo_camera_24),
             unselectedIcon = ImageVector.vectorResource(R.drawable.outline_photo_camera_24)
         ),
@@ -64,7 +64,7 @@ fun NavigationBar(navController: NavController) {
     NavigationBar {
         items.forEach { item ->
             NavigationBarItem(
-                selected = currentRoute == item.route,
+                selected = currentRoute?.startsWith(item.route) == true,
                 onClick = {
                     if (currentRoute != item.route) {
                         navController.navigate(item.route) {
@@ -83,7 +83,7 @@ fun NavigationBar(navController: NavController) {
                         badge = {}
                     ) {
                         Icon(
-                            imageVector = if (currentRoute == item.route) {
+                            imageVector = if (currentRoute?.startsWith(item.route) == true) {
                                 item.selectedIcon
                             } else item.unselectedIcon,
                             contentDescription = item.title
@@ -94,4 +94,3 @@ fun NavigationBar(navController: NavController) {
         }
     }
 }
-
