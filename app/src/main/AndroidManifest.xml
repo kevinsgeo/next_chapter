@@ -3,8 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions for accessing location (Optional but Recommended) -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +24,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Next_chapter"
         tools:targetApi="31">
+
+        <activity
+            android:name=".ChannelActivity"
+            android:exported="true" />
 
         <!-- Google Maps API Key -->
         <meta-data
