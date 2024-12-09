@@ -1,21 +1,32 @@
 package com.cs407.next_chapter
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.cs407.next_chapter.ui.theme.Next_chapterTheme
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}) {
-    var username by remember { mutableStateOf("") }
+fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}, firebaseAuth: FirebaseAuth, ) {
+    var emailAddress by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -32,15 +43,15 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}) {
         )
 
         Text(
-            text = "Username",
+            text = "Email Address",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 16.dp)
         )
 
         TextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
+            value = emailAddress,
+            onValueChange = { emailAddress = it },
+            label = { Text("Email Address") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,6 +71,16 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}) {
             onValueChange = { password = it },
             label = { Text("Password") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+
+                    Icon(
+                        imageVector = if (isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
+                    )
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
@@ -68,7 +89,25 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}) {
         Spacer(modifier = Modifier.height(44.dp))
 
         Button(
-            onClick = onLogin,
+            onClick = {
+                if (emailAddress.isNotBlank() && password.isNotBlank()) {
+                    firebaseAuth.signInWithEmailAndPassword(emailAddress, password)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // Login successful
+                                Log.d("Login", "Login successful")
+                                Toast.makeText(context, "Login Successful!", Toast.LENGTH_SHORT).show()
+                                onLogin()
+                            } else {
+                                // Login failed
+                                Log.e("Login", "Login failed: ${task.exception?.message}")
+                                Toast.makeText(context, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                } else {
+                    Toast.makeText(context, "Please fill out all fields", Toast.LENGTH_SHORT).show()
+                }
+            },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,6 +115,7 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}) {
         ) {
             Text("Login")
         }
+
 
         Spacer(modifier = Modifier.height(45.dp))
 
@@ -101,11 +141,5 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    Next_chapterTheme {
-        LoginScreen()
-    }
-}
+
 
