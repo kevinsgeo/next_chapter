@@ -23,7 +23,7 @@ import androidx.compose.runtime.setValue
 fun UserProfileScreen(
     navController: NavHostController? = null, // Made optional for preview
     onSettingsClick: () -> Unit = {
-        Log.d("ProfileTopAppBar", "Settings clicked")
+        navController?.navigate("settings")
     }
 ) {
     var selectedTabIndex by remember { mutableStateOf(0) }
