@@ -2,8 +2,7 @@ package com.cs407.next_chapter
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -175,6 +172,7 @@ fun MyBooksContent() {
     val apiKey = getGoogleApiKey(context)
     val booksDetails = remember { mutableStateListOf<Book>() } // State list for recomposition
     val isLoading = remember { mutableStateOf(true) }
+    var selectedBook by remember { mutableStateOf<Book?>(null) } // For the selected book dialog
 
     // Fetch ISBNs and corresponding book details
     LaunchedEffect(userUid, apiKey) {
@@ -259,13 +257,144 @@ fun MyBooksContent() {
             ) {
                 items(booksDetails) { book ->
                     RecommendationCard(book = book, onClick = {
-                        Log.d("MyBooksContent", "Clicked on ${book.title}")
+                        selectedBook = book // Set selected book to open the dialog
                     })
                 }
             }
         }
     }
+    selectedBook?.let { book ->
+        BookActionDialog(
+            book = book,
+            onInitiateSwap = { onInitiateSwap(book, userUid!!)
+                Toast.makeText(context, "Thanks for going green!", Toast.LENGTH_SHORT).show()},
+            onDeleteBook = { onDeleteBook(book, userUid!!)
+                Toast.makeText(context, "${book.title} successfully deleted!", Toast.LENGTH_SHORT).show()},
+            onDismiss = { selectedBook = null }
+        )
+    }
 }
+
+@Composable
+fun BookActionDialog(
+    book: Book,
+    onInitiateSwap: () -> Unit,
+    onDeleteBook: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text(text = "Book Actions") },
+        text = { Text(text = "Choose an action for ${book.title}.") },
+        confirmButton = {
+            Button(onClick = {
+                onInitiateSwap()
+                onDismiss()
+            }) {
+                Text("Initiate Swap")
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                onDeleteBook()
+                onDismiss()
+            }) {
+                Text("Delete Book")
+            }
+        }
+    )
+}
+
+fun onInitiateSwap(book: Book, userUid: String) {
+    val databaseRef = FirebaseDatabase.getInstance().getReference("Books")
+    val userRef = FirebaseDatabase.getInstance().getReference("Users").child(userUid)
+
+    // Step 1: Remove the book's UID from the "Books" database
+    databaseRef.child(book.isbn).get().addOnSuccessListener { snapshot ->
+        if (snapshot.exists()) {
+            val existingUids = snapshot.child("uid").value as? MutableList<String> ?: mutableListOf()
+            existingUids.remove(userUid)
+
+            if (existingUids.isEmpty()) {
+                // If no more users own this book, delete the book entry
+                databaseRef.child(book.isbn).removeValue()
+            } else {
+                // Otherwise, update the UID array
+                databaseRef.child(book.isbn).child("uid").setValue(existingUids)
+            }
+
+            // Step 2: Increment the user's "swaps" field
+            userRef.child("swaps").get().addOnSuccessListener { swapSnapshot ->
+                val swaps = (swapSnapshot.value as? Long)?.toInt() ?: 0
+                userRef.child("swaps").setValue(swaps + 1)
+                    .addOnSuccessListener {
+                        Log.d("onInitiateSwap", "Successfully incremented swaps field.")
+                    }
+                    .addOnFailureListener { error ->
+                        Log.e("onInitiateSwap", "Failed to increment swaps: ${error.message}")
+                    }
+            }
+
+            // Step 3: Remove the book's ISBN from the user's "my_books" field
+            userRef.child("my_books").get().addOnSuccessListener { myBooksSnapshot ->
+                val myBooks = myBooksSnapshot.value as? MutableList<String> ?: mutableListOf()
+                myBooks.remove(book.isbn)
+
+                userRef.child("my_books").setValue(myBooks)
+                    .addOnSuccessListener {
+                        Log.d("onInitiateSwap", "Successfully removed book from user's my_books.")
+                    }
+                    .addOnFailureListener { error ->
+                        Log.e("onInitiateSwap", "Failed to remove book from my_books: ${error.message}")
+                    }
+            }.addOnFailureListener { error ->
+                Log.e("onInitiateSwap", "Failed to fetch user's my_books: ${error.message}")
+            }
+        }
+    }.addOnFailureListener { error ->
+        Log.e("onInitiateSwap", "Failed to fetch book data: ${error.message}")
+    }
+}
+
+fun onDeleteBook(book: Book, userUid: String) {
+    val databaseRef = FirebaseDatabase.getInstance().getReference("Books")
+    val userRef = FirebaseDatabase.getInstance().getReference("Users").child(userUid)
+
+    // Step 1: Remove the book's UID from the "Books" database
+    databaseRef.child(book.isbn).get().addOnSuccessListener { snapshot ->
+        if (snapshot.exists()) {
+            val existingUids = snapshot.child("uid").value as? MutableList<String> ?: mutableListOf()
+            existingUids.remove(userUid)
+
+            if (existingUids.isEmpty()) {
+                // If no more users own this book, delete the book entry
+                databaseRef.child(book.isbn).removeValue()
+            } else {
+                // Otherwise, update the UID array
+                databaseRef.child(book.isbn).child("uid").setValue(existingUids)
+            }
+        }
+    }.addOnFailureListener { error ->
+        Log.e("onDeleteBook", "Failed to update book UID array: ${error.message}")
+    }
+
+    // Step 2: Remove the book's ISBN from the user's "my_books" field
+    userRef.child("my_books").get().addOnSuccessListener { snapshot ->
+        val myBooks = snapshot.value as? MutableList<String> ?: mutableListOf()
+        myBooks.remove(book.isbn)
+
+        userRef.child("my_books").setValue(myBooks)
+            .addOnSuccessListener {
+                Log.d("onDeleteBook", "Successfully removed book from user's my_books.")
+            }
+            .addOnFailureListener { error ->
+                Log.e("onDeleteBook", "Failed to remove book from user's my_books: ${error.message}")
+            }
+    }.addOnFailureListener { error ->
+        Log.e("onDeleteBook", "Failed to fetch user's my_books: ${error.message}")
+    }
+}
+
 
 suspend fun fetchBooksByISBN(isbn: String): List<Book> {
     return withContext(Dispatchers.IO) {
