@@ -2,6 +2,13 @@ package com.cs407.next_chapter
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -9,8 +16,11 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,8 +28,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import com.cs407.next_chapter.ui.theme.Next_chapterTheme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.models.User
 
 @Composable
 fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}, firebaseAuth: FirebaseAuth, ) {
@@ -36,11 +50,42 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}, firebaseAut
     ) {
         Spacer(modifier = Modifier.height(170.dp))
 
-        Text(
-            text = "NextChapter",
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(bottom = 41.dp)
-        )
+        @Composable
+        fun FadeText() {
+            // Animatable for controlling alpha
+            val alpha = remember { Animatable(0f) }
+
+            // Launch the animation for a single fade-in
+            LaunchedEffect(Unit) {
+                alpha.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
+                )
+            }
+
+            // Display the text with the animated alpha
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "NextChapter",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Cursive, // Built-in cursive font
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = alpha.value)
+                    ),
+                    fontSize = 36.sp
+                )
+            }
+        }
+
+
+        FadeText()
+
+
 
         Text(
             text = "Email Address",
@@ -95,13 +140,22 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}, firebaseAut
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 // Login successful
+                                val firebaseUser = firebaseAuth.currentUser
+                                if (firebaseUser != null) {
+                                    connectChatUser(firebaseUser)
+                                }
                                 Log.d("Login", "Login successful")
-                                Toast.makeText(context, "Login Successful!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Login Successful!", Toast.LENGTH_SHORT)
+                                    .show()
                                 onLogin()
                             } else {
                                 // Login failed
                                 Log.e("Login", "Login failed: ${task.exception?.message}")
-                                Toast.makeText(context, "Login Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Login Failed: ${task.exception?.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                 } else {
@@ -117,6 +171,7 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}, firebaseAut
         }
 
 
+
         Spacer(modifier = Modifier.height(45.dp))
 
         Row(
@@ -125,21 +180,48 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}, firebaseAut
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Text(
-                text = "Don't have an account?",
-                style = MaterialTheme.typography.bodySmall
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center // Centers content horizontally
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally // Aligns children horizontally to the center
+                ) {
+                    Text(
+                        text = "Don't have an account?",
+                        style = MaterialTheme.typography.bodySmall
+                    )
 
-            TextButton(onClick = onSignUp) {
-                Text(
-                    text = "Sign up",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 16.sp
-                )
+                    TextButton(onClick = onSignUp) {
+                        Text(
+                            text = "Sign up",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
             }
+
         }
     }
 }
-
-
+fun connectChatUser(firebaseUser: FirebaseUser) {
+    val client = ChatClient.instance()
+    val user = User(
+        id = firebaseUser.uid,
+        extraData = mutableMapOf(
+            "name" to (firebaseUser.displayName ?: "Guest"),
+            "image" to (firebaseUser.photoUrl?.toString() ?: "https://bit.ly/2TIt8NR")
+        )
+    )
+    val token = client.devToken(user.id) // Replace with a real token in production
+    client.connectUser(user = user, token = token).enqueue { result ->
+        result.onSuccess {
+            Log.d("ChatInitialization", "User connected successfully.")
+        }.onError { error ->
+            Log.e("ChatInitialization", "Error connecting user: ${error.message}")
+        }
+    }
+}
 
