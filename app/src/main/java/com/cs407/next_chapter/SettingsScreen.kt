@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
+import io.getstream.chat.android.client.ChatClient
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -123,6 +124,7 @@ fun DeleteAccountConfirmationDialog(
 }
 
 fun DeleteAccountPressed(context: Context, navController: NavHostController) {
+    disconnectChatUser()
     val currentUser = FirebaseAuth.getInstance().currentUser
     if (currentUser != null) {
         val uid = currentUser.uid // Get the current user's UID
@@ -184,8 +186,22 @@ fun DeleteAccountPressed(context: Context, navController: NavHostController) {
 fun LogOutPressed(context: Context, navController: NavHostController) {
     FirebaseAuth.getInstance().signOut()
     Toast.makeText(context, "Logged out successfully!", Toast.LENGTH_SHORT).show()
+    disconnectChatUser()
     navController.navigate("SigninScreen") { popUpTo(0) }
 }
+
+fun disconnectChatUser() {
+    val client = ChatClient.instance()
+
+    client.disconnect(flushPersistence = true).enqueue { result ->
+        result.onSuccess {
+            Log.d("ChatDisconnection", "User disconnected successfully.")
+        }.onError { error ->
+            Log.e("ChatDisconnection", "Error disconnecting user: ${error.message}")
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable

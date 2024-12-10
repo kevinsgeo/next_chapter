@@ -79,13 +79,6 @@ fun WishlistScreenInfoScreen(
                         .padding(16.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Text(
-                        text = "ISBN: ${scannedISBN ?: "Unknown"}",
-                        color = Color.Black,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
                     bookImageUrl.value?.let { imageUrl ->
                         Image(
                             painter = rememberAsyncImagePainter(
@@ -94,9 +87,8 @@ fun WishlistScreenInfoScreen(
                             ),
                             contentDescription = "Book Cover",
                             modifier = Modifier
-                                .fillMaxWidth(0.5f)
-                                .aspectRatio(1f)
-                                .padding(bottom = 16.dp)
+                                .fillMaxWidth()
+                                .height(160.dp)
                         )
                     } ?: Text(
                         text = "No book cover available",
