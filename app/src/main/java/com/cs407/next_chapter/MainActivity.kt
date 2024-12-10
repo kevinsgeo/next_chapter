@@ -1,6 +1,7 @@
 package com.cs407.next_chapter
 
-import BookInfoScreen
+
+import MapScreen
 import SignupScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -122,7 +123,17 @@ fun NavigationGraph(navController: NavHostController, firebaseAuth: FirebaseAuth
         }
 
         composable("settings") {
-            SettingsScreen(onBackPressed = { navController.navigate("profile") })
+            SettingsScreen(onBackPressed = { navController.navigate("profile") },
+                navController = navController)
         }
+
+        composable(
+            route = "WishlistInfoScreen/{scannedISBN}",
+            arguments = listOf(navArgument("scannedISBN") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val scannedISBN = backStackEntry.arguments?.getString("scannedISBN")
+            WishlistScreenInfoScreen(navController = navController, scannedISBN = scannedISBN)
+        }
+
     }
 }

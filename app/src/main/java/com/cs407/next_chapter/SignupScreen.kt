@@ -30,9 +30,21 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.platform.LocalContext
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseUser
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.models.User
 
 @Composable
 fun SignupScreen(
@@ -67,11 +79,42 @@ fun SignupScreen(
             }
         }
 
-        Text(
-            text = "NextChapter",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 30.dp)
-        )
+
+        @Composable
+        fun FadeText() {
+            // Animatable for controlling alpha
+            val alpha = remember { Animatable(0f) }
+
+            // Launch the animation for a single fade-in
+            LaunchedEffect(Unit) {
+                alpha.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
+                )
+            }
+
+            // Display the text with the animated alpha
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+
+                Text(
+                    text = "NextChapter",
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Cursive, // Built-in cursive font
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = alpha.value)
+                    ),
+                    fontSize = 36.sp
+                )
+            }
+        }
+
+
+        FadeText()
 
 
 
@@ -209,6 +252,7 @@ fun SignupScreen(
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 // Fetch user ID
+                                val firebaseUser = firebaseAuth.currentUser
                                 val uid = firebaseAuth.currentUser?.uid
                                 if (uid != null) {
                                     // Prepare data for Realtime Database
@@ -230,6 +274,9 @@ fun SignupScreen(
                                         .addOnSuccessListener {
                                             // Success - Navigate to next screen
                                             Log.d("Signup", "User data saved successfully!")
+                                            if (firebaseUser != null) {
+                                                connectChatUser(firebaseUser)
+                                            }
                                             navController.navigate("scan_isbn")
                                         }
                                         .addOnFailureListener { error ->
@@ -274,6 +321,24 @@ fun SignupScreen(
             Text("Sign Up")
         }
 
+    }
+}
+fun connectChatUser(firebaseUser: FirebaseUser) {
+    val client = ChatClient.instance()
+    val user = User(
+        id = firebaseUser.uid,
+        extraData = mutableMapOf(
+            "name" to (firebaseUser.displayName ?: "Guest"),
+            "image" to (firebaseUser.photoUrl?.toString() ?: "https://bit.ly/2TIt8NR")
+        )
+    )
+    val token = client.devToken(user.id) // Replace with a real token in production
+    client.connectUser(user = user, token = token).enqueue { result ->
+        result.onSuccess {
+            Log.d("ChatInitialization", "User connected successfully.")
+        }.onError { error ->
+            Log.e("ChatInitialization", "Error connecting user: ${error.message}")
+        }
     }
 }
 

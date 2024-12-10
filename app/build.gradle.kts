@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.androidx.material3.lint)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.androidx.animation.core.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
