@@ -157,6 +157,7 @@ fun HomeScreen(navController: NavController) {
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
+                // Search Bar & Filter Button
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -230,13 +231,14 @@ fun HomeScreen(navController: NavController) {
                             }
                         }
                     }
-                    }
+                }
 
-
+                // Spacer
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
+                // Available for swap section
                 if (displayedBooks.isNotEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Text(
@@ -256,7 +258,20 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
+                // Not available for swap section
                 if (apiResults.isNotEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Not available for swap",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 4.dp),
+                            textAlign = TextAlign.Start
+                        )
+                    }
+
                     items(apiResults) { book ->
                         RecommendationCard(book = book, onClick = {
                             navController.navigate("book_info/${book.isbn}")
@@ -264,6 +279,7 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
 
+                // Load More button
                 if (hasMore && searchQuery.text.isBlank()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Spacer(modifier = Modifier.height(16.dp))
@@ -290,6 +306,7 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
             }
+
         }
     }
 }
