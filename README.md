@@ -53,15 +53,10 @@ NextChapter is a mobile-first Android app that allows users to swap books based 
 ## Testing and Deployment
 ### **Testing Environments:**
 - Tested across Android versions to ensure compatibility and seamless functionality.
-- Simulated various network conditions to verify the robustness of real-time updates and notifications.
 
 ### **User Testing:**
 - Involves collecting feedback from potential users to refine usability and features.
 - Conducted on real Android devices for accurate results.
-
-### **Deployment:**
-- Designed for easy deployment via the Google Play Store.
-- Firebase ensures scalable backend infrastructure without additional server management.
 
 ---
 
