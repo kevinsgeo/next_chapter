@@ -47,53 +47,32 @@ data class Book(
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    // State declarations using delegated properties
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
-    var selectedSort by remember { mutableStateOf("Recommended") }
 
     val scope = rememberCoroutineScope()
 
-    // Holds all books loaded so far from local DB
     val allBooks = remember { mutableStateListOf<Book>() }
-
-    // Holds the currently displayed subset of books from local DB (after searching)
     val displayedBooks = remember { mutableStateListOf<Book>() }
-
-    // Holds books from Google API if local search yields no result
     val apiResults = remember { mutableStateListOf<Book>() }
-
-    // Track if more books are available to load (local DB)
     var hasMore by rememberSaveable { mutableStateOf(true) }
-
-    // Track the last key fetched (for pagination)
     var lastKey by rememberSaveable { mutableStateOf<String?>(null) }
-
-    // Filtering states
     var showFilterMenu by remember { mutableStateOf(false) }
     var selectedAuthor by remember { mutableStateOf<String?>(null) }
     var selectedGenre by remember { mutableStateOf<String?>(null) }
-
-    // Add filter mode state
     var filterMode by remember { mutableStateOf(FilterMode.NONE) }
 
-    // Function to apply filters
     suspend fun applyFilter() {
         val query = searchQuery.text.trim().lowercase()
         displayedBooks.clear()
         apiResults.clear()
 
         if (query.isEmpty()) {
-            // Show all local books if no query
             displayedBooks.addAll(allBooks)
         } else {
             when (filterMode) {
                 FilterMode.AUTHOR -> {
-                    // Filter allBooks by authors
-                    val filteredLocal = allBooks.filter {
-                        it.authors.lowercase().contains(query)
-                    }
+                    val filteredLocal = allBooks.filter { it.authors.lowercase().contains(query) }
                     if (filteredLocal.isEmpty()) {
-                        // If no local matches, fetch from API
                         val fetchedFromApi = fetchBooksFromGoogleApi(query, FilterMode.AUTHOR)
                         apiResults.addAll(fetchedFromApi)
                     } else {
@@ -101,12 +80,8 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
                 FilterMode.GENRE -> {
-                    // Filter allBooks by genre
-                    val filteredLocal = allBooks.filter {
-                        it.genre.lowercase().contains(query)
-                    }
+                    val filteredLocal = allBooks.filter { it.genre.lowercase().contains(query) }
                     if (filteredLocal.isEmpty()) {
-                        // If no local matches, fetch from API
                         val fetchedFromApi = fetchBooksFromGoogleApi(query, FilterMode.GENRE)
                         apiResults.addAll(fetchedFromApi)
                     } else {
@@ -114,12 +89,8 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
                 FilterMode.NONE -> {
-                    // Default filter by title
-                    val filteredLocal = allBooks.filter {
-                        it.title.lowercase().contains(query)
-                    }
+                    val filteredLocal = allBooks.filter { it.title.lowercase().contains(query) }
                     if (filteredLocal.isEmpty()) {
-                        // If no local matches, fetch from API
                         val fetchedFromApi = fetchBooksFromGoogleApi(query, FilterMode.NONE)
                         apiResults.addAll(fetchedFromApi)
                     } else {
@@ -129,7 +100,6 @@ fun HomeScreen(navController: NavController) {
             }
         }
 
-        // Apply specific value filters if selected
         if (selectedAuthor != null) {
             displayedBooks.retainAll { it.authors.contains(selectedAuthor!!) }
             apiResults.retainAll { it.authors.contains(selectedAuthor!!) }
@@ -140,32 +110,23 @@ fun HomeScreen(navController: NavController) {
         }
     }
 
-    // Initially load the first 10 books locally
     LaunchedEffect(Unit) {
         val (loadedBooks, lastFetchedKey, moreAvailable) = loadBooksFromDatabase(limit = 10, startAfter = null)
         allBooks.clear()
         allBooks.addAll(loadedBooks)
         lastKey = lastFetchedKey
         hasMore = moreAvailable
-
-        // Initially show all books (no search)
         applyFilter()
     }
 
-    // Every time the search query or filter mode changes, re-apply the filter
     LaunchedEffect(searchQuery, filterMode) {
         scope.launch {
             applyFilter()
         }
     }
 
-    // Collect authors and genres for filtering menu
-    val authorsSet = remember {
-        mutableSetOf<String>()
-    }
-    val genresSet = remember {
-        mutableSetOf<String>()
-    }
+    val authorsSet = remember { mutableSetOf<String>() }
+    val genresSet = remember { mutableSetOf<String>() }
 
     LaunchedEffect(displayedBooks, apiResults) {
         authorsSet.clear()
@@ -196,7 +157,6 @@ fun HomeScreen(navController: NavController) {
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                // Search Bar & Filter Button
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -237,71 +197,50 @@ fun HomeScreen(navController: NavController) {
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
+                            DropdownMenu(
+                                expanded = showFilterMenu,
+                                onDismissRequest = { showFilterMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Filter by Author") },
+                                    onClick = {
+                                        filterMode = FilterMode.AUTHOR
+                                        showFilterMenu = false
+                                        scope.launch { applyFilter() }
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Filter by Genre") },
+                                    onClick = {
+                                        filterMode = FilterMode.GENRE
+                                        showFilterMenu = false
+                                        scope.launch { applyFilter() }
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Clear Filters") },
+                                    onClick = {
+                                        filterMode = FilterMode.NONE
+                                        selectedAuthor = null
+                                        selectedGenre = null
+                                        showFilterMenu = false
+                                        scope.launch { applyFilter() }
+                                    }
+                                )
+                            }
                         }
                     }
-                }
+                    }
+
 
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                // Sort Buttons
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Sort by:",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.align(Alignment.CenterVertically)
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Button(
-                            onClick = { selectedSort = "Nearest You" },
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.height(40.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (selectedSort == "Nearest You") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
-                            )
-                        ) {
-                            Text(
-                                text = "Nearest You",
-                                color = if (selectedSort == "Nearest You") Color.White else Color.Black
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Button(
-                            onClick = { selectedSort = "Recommended" },
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.height(40.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (selectedSort == "Recommended") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
-                            )
-                        ) {
-                            Text(
-                                text = "Recommended",
-                                color = if (selectedSort == "Recommended") Color.White else Color.Black
-                            )
-                        }
-                    }
-                }
-
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
-
-                val showAvailableSection = displayedBooks.isNotEmpty()
-                val showApiSection = apiResults.isNotEmpty()
-
-                if (showAvailableSection || showApiSection) {
+                if (displayedBooks.isNotEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Text(
-                            text = "Recommended for You",
+                            text = "Available for swap",
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -310,197 +249,44 @@ fun HomeScreen(navController: NavController) {
                         )
                     }
 
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    // Show "Available for swap" if we have local results
-                    if (showAvailableSection) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Text(
-                                text = "Available for swap",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 4.dp),
-                                textAlign = TextAlign.Start
-                            )
-                        }
-
-                        items(displayedBooks) { book ->
-                            RecommendationCard(book = book, onClick = {
-                                navController.navigate("book_info/${book.isbn}")
-                            })
-                        }
-                    }
-
-                    // If we have API results and the query is not empty, show "Not available for swap"
-                    if (showApiSection) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = "Not available for swap",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 4.dp),
-                                textAlign = TextAlign.Start
-                            )
-                        }
-
-                        items(apiResults) { book ->
-                            RecommendationCard(book = book, onClick = {
-                                navController.navigate("book_info/${book.isbn}")
-                            })
-                        }
-                    }
-
-                    // Show "Load More" only if we are not currently searching and have more local books
-                    if (hasMore && searchQuery.text.isBlank()) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Button(
-                                onClick = {
-                                    scope.launch {
-                                        val (loadedBooks, lastFetchedKey, moreAvailable) = loadBooksFromDatabase(
-                                            limit = 10,
-                                            startAfter = lastKey
-                                        )
-                                        allBooks.addAll(loadedBooks)
-                                        lastKey = lastFetchedKey
-                                        hasMore = moreAvailable
-                                        applyFilter()
-                                    }
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp)
-                            ) {
-                                Text("Load More")
-                            }
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                    }
-
-                } else {
-                    if (searchQuery.text.isNotBlank()) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = "No results found",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Color.Gray,
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
-                        }
-                    } else {
-                        // If query is blank and we have no books at all, means DB empty
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = "No books available",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Color.Gray,
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
-                        }
+                    items(displayedBooks) { book ->
+                        RecommendationCard(book = book, onClick = {
+                            navController.navigate("book_info/${book.isbn}")
+                        })
                     }
                 }
-            }
 
-            // DropdownMenu placed outside the LazyVerticalGrid
-            if (showFilterMenu) {
-                DropdownMenu(
-                    expanded = showFilterMenu,
-                    onDismissRequest = { showFilterMenu = false },
-                    modifier = Modifier
-                        .zIndex(10f)
-                        .background(Color.White)
-                ) {
-                    // Filter Mode Selection
-                    DropdownMenuItem(
-                        text = { Text("Filter by Author") },
-                        onClick = {
-                            filterMode = FilterMode.AUTHOR
-                            selectedGenre = null // Clear genre filter if any
-                            showFilterMenu = false
-                            scope.launch { applyFilter() }
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Filter by Genre") },
-                        onClick = {
-                            filterMode = FilterMode.GENRE
-                            selectedAuthor = null // Clear author filter if any
-                            showFilterMenu = false
-                            scope.launch { applyFilter() }
-                        }
-                    )
+                if (apiResults.isNotEmpty()) {
+                    items(apiResults) { book ->
+                        RecommendationCard(book = book, onClick = {
+                            navController.navigate("book_info/${book.isbn}")
+                        })
+                    }
+                }
 
-                    // Divider between filter modes and specific selections
-                    Divider()
-
-                    // Show specific filter options based on the selected filter mode
-                    when (filterMode) {
-                        FilterMode.AUTHOR -> {
-                            if (authorsSet.isNotEmpty()) {
-                                DropdownMenuItem(
-                                    text = { Text("Clear Author Filter") },
-                                    onClick = {
-                                        selectedAuthor = null
-                                        filterMode = FilterMode.NONE
-                                        showFilterMenu = false
-                                        scope.launch { applyFilter() }
-                                    }
-                                )
-                                authorsSet.forEach { author ->
-                                    DropdownMenuItem(
-                                        text = { Text(author) },
-                                        onClick = {
-                                            selectedAuthor = author
-                                            showFilterMenu = false
-                                            scope.launch { applyFilter() }
-                                        }
+                if (hasMore && searchQuery.text.isBlank()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    val (loadedBooks, lastFetchedKey, moreAvailable) = loadBooksFromDatabase(
+                                        limit = 10,
+                                        startAfter = lastKey
                                     )
+                                    allBooks.addAll(loadedBooks)
+                                    lastKey = lastFetchedKey
+                                    hasMore = moreAvailable
+                                    applyFilter()
                                 }
-                            } else {
-                                DropdownMenuItem(
-                                    text = { Text("No Authors Available") },
-                                    onClick = { /* Optionally handle this case */ }
-                                )
-                            }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        ) {
+                            Text("Load More")
                         }
-                        FilterMode.GENRE -> {
-                            if (genresSet.isNotEmpty()) {
-                                DropdownMenuItem(
-                                    text = { Text("Clear Genre Filter") },
-                                    onClick = {
-                                        selectedGenre = null
-                                        filterMode = FilterMode.NONE
-                                        showFilterMenu = false
-                                        scope.launch { applyFilter() }
-                                    }
-                                )
-                                genresSet.forEach { genre ->
-                                    DropdownMenuItem(
-                                        text = { Text(genre) },
-                                        onClick = {
-                                            selectedGenre = genre
-                                            showFilterMenu = false
-                                            scope.launch { applyFilter() }
-                                        }
-                                    )
-                                }
-                            } else {
-                                DropdownMenuItem(
-                                    text = { Text("No Genres Available") },
-                                    onClick = { /* Optionally handle this case */ }
-                                )
-                            }
-                        }
-                        else -> {
-                            // No specific filter mode selected
-                        }
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
