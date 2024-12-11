@@ -1,6 +1,5 @@
 package com.cs407.next_chapter
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build
@@ -20,7 +19,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
@@ -167,7 +165,7 @@ fun UploadPhotoContent(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxSize()
                             .align(Alignment.Center),
-                        contentScale = ContentScale.Fit // Ensures the image fits the screen
+                        contentScale = ContentScale.Fit
                     )
                 }
             }

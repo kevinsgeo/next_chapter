@@ -44,9 +44,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Changed this function a lot, note for other group members, instead of using a
-// current screen, using NavController directly for better ScanISBN navigation
-
 @Composable
 fun AppNavigation(onboardingUtils: OnboardingUtils, firebaseAuth: FirebaseAuth) {
     val navController = rememberNavController()
@@ -81,7 +78,7 @@ fun NavigationGraph(navController: NavHostController, firebaseAuth: FirebaseAuth
             LoginScreen(
                 onSignUp = { navController.navigate("SignupScreen") },
                 onLogin = { navController.navigate("home") },
-                firebaseAuth = firebaseAuth// Changed from "HomeScreen" to "home"
+                firebaseAuth = firebaseAuth
             )
         }
         composable("SignupScreen") {

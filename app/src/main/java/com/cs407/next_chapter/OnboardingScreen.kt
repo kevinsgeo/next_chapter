@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(onFinished: () -> Unit) {
 
@@ -112,6 +111,5 @@ fun OnboardingScreen(onFinished: () -> Unit) {
 @Composable
 fun OnboardingScreenPreview() {
     OnboardingScreen {
-        // Placeholder for preview
     }
 }

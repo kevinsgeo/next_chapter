@@ -36,7 +36,7 @@ import org.json.JSONObject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileScreen(
-    navController: NavHostController? = null, // Optional for preview
+    navController: NavHostController? = null,
     onSettingsClick: () -> Unit = {
         navController?.navigate("settings")
     }
@@ -189,7 +189,6 @@ fun MyBooksContent() {
         }
 
         try {
-            // Step 1: Fetch user's `my_books` ISBNs from Firebase
             Log.d("MyBooksContent", "Fetching ISBNs from Firebase.")
             val userRef = com.google.firebase.database.FirebaseDatabase.getInstance()
                 .getReference("Users").child(userUid).child("my_books")
@@ -204,7 +203,6 @@ fun MyBooksContent() {
 
             Log.d("MyBooksContent", "Fetched ISBNs: $isbnList")
 
-            // Step 2: Fetch book details from Google Books API
             booksDetails.clear()
             for (isbn in isbnList.filterIsInstance<String>()) {
                 Log.d("MyBooksContent", "Calling Google Books API for ISBN: $isbn")

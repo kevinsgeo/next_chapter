@@ -74,7 +74,7 @@ fun LoginScreen(onLogin: () -> Unit = {}, onSignUp: () -> Unit = {}, firebaseAut
                     text = "NextChapter",
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Cursive, // Built-in cursive font
+                        fontFamily = FontFamily.Cursive,
                         color = MaterialTheme.colorScheme.primary.copy(alpha = alpha.value)
                     ),
                     fontSize = 36.sp
@@ -215,7 +215,7 @@ fun connectChatUser(firebaseUser: FirebaseUser) {
             "image" to (firebaseUser.photoUrl?.toString() ?: "https://bit.ly/2TIt8NR")
         )
     )
-    val token = client.devToken(user.id) // Replace with a real token in production
+    val token = client.devToken(user.id)
     client.connectUser(user = user, token = token).enqueue { result ->
         result.onSuccess {
             Log.d("ChatInitialization", "User connected successfully.")

@@ -45,7 +45,7 @@ fun NavigationBar(navController: NavController) {
             unselectedIcon = Icons.Outlined.Home
         ),
         BottomNavigationItem(
-            route = "scan_isbn", // Removed timestamp
+            route = "scan_isbn",
             title = "Scan",
             selectedIcon = ImageVector.vectorResource(R.drawable.baseline_photo_camera_24),
             unselectedIcon = ImageVector.vectorResource(R.drawable.outline_photo_camera_24)

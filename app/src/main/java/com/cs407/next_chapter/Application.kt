@@ -19,7 +19,7 @@ class Application : Application() {
         // Initialize ChatClient
         ChatClient.Builder(getString(R.string.api_key), this)
             .withPlugins(offlinePluginFactory, statePluginFactory)
-            .logLevel(ChatLogLevel.ALL) // Verbose logging for demonstration; use NONE in production
+            .logLevel(ChatLogLevel.ALL)
             .build()
 
         Log.d("MyApplication", "ChatClient initialized successfully")

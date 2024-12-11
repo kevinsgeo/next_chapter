@@ -18,7 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.cs407.next_chapter.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.getValue
@@ -50,10 +49,9 @@ fun BookInfoOnClick(navController: NavHostController, scannedISBN: String?) {
 
     LaunchedEffect(scannedISBN) {
         if (scannedISBN != null) {
-            // Call fetchBookDetails from wherever it's defined (e.g., BookInfoScreen.kt)
-            val apiKey = getGoogleApiKey(context) // Assume defined in BookInfoScreen.kt or another utility file
+            val apiKey = getGoogleApiKey(context)
             if (apiKey != null) {
-                val (info, imageUrl, description) = fetchBookDetails(scannedISBN, apiKey) // Assume defined elsewhere
+                val (info, imageUrl, description) = fetchBookDetails(scannedISBN, apiKey)
                 bookDetails.value = info ?: "No details found for ISBN: $scannedISBN"
                 bookImageUrl.value = imageUrl
                 bookDescription.value = description ?: "No description available."
@@ -244,11 +242,6 @@ fun BookInfoOnClick(navController: NavHostController, scannedISBN: String?) {
         }
     )
 }
-
-// Removed fetchBookDetails and getGoogleApiKey from here since they are defined elsewhere.
-// Make sure to import them from the file where they are defined, e.g.:
-// import com.cs407.next_chapter.fetchBookDetails
-// import com.cs407.next_chapter.getGoogleApiKey
 
 fun createAndNavigateToChannel(
     currentUserId: String,

@@ -1,7 +1,6 @@
 package com.cs407.next_chapter
 
 import androidx.annotation.DrawableRes
-import com.cs407.next_chapter.R
 
 sealed class OnboardingModel(
     @DrawableRes val image: Int,
