@@ -17,62 +17,52 @@ A report by [Book Riot](https://bookriot.com/book-price-increase/) indicates tha
 ### What is Our App?
 NextChapter is a mobile-first Android app that allows users to swap books based on their preferences and location. Users can upload pictures of books they wish to swap, browse books offered by others, and arrange swaps with people nearby using geolocation. Users can also maintain a wishlist of books and receive notifications when a book from their list is uploaded nearby. If a swap is not found, users can choose to donate the books to local charity organizations.
 
-#### Additional features include:
-- **User Reviews:** Users can review each other after swaps, and verified, trusted users will earn a “verified” status. Users can also review individual books.
-- **Sustainability Tracker:** Shows users how much they’ve contributed to reducing their carbon footprint by swapping books rather than buying new ones.
-- **AI Recommendations:** The app uses AI to suggest books based on users' swapping history and wishlists.
+## Tech Stack
+### **Frontend:**
+- **Jetpack Compose:** Used for building the app's modern, responsive, and declarative UI.
+- **CameraX:** Integrated for capturing and uploading book images directly from the app.
+- **Material3 Design:** Ensures consistency and adherence to modern UI/UX principles.
 
-### Why should users care?
-NextChapter offers an eco-friendly, budget-conscious solution for readers who want to access new books without buying them. It builds a community of trusted swappers and emphasizes sustainability while providing a personalized book recommendation experience.
+### **Backend:**
+- **Firebase Realtime Database:** Manages user profiles, book listings, reviews, wishlist notifications, and swapping history. Real-time synchronization ensures instant updates across devices.
+- **Stream API:** Powers the chat functionality, enabling users to communicate in real-time to coordinate swaps.
+- **Google Books API:** Fetches detailed book information (title, author, genre, thumbnail) for enhanced listings.
+- **Google Maps API:** Provides geolocation services to facilitate local book swaps.
 
-#### Target Audience:
-- Students looking to swap textbooks
-- Avid readers wanting to trade fiction/non-fiction books
-- Eco-conscious users who care about sustainability
-- Local communities looking for a way to share resources
+### **Third-Party Services:**
+- **Google Books API:** Allows users to search for books by ISBN, author, or genre, expanding the database of available books.
+- **Google Maps API:** Ensures accurate geolocation matching, helping users find swaps near them.
 
-We will interact with these users to gather feedback throughout the development process, ensuring the app is user-friendly and meets their needs.
+## Features
+### Mobile-Specific Innovations:
+1. **CameraX Integration:** Allows users to quickly capture and upload clear images of books, making listings more visually appealing.
+2. **Geolocation Matching:** Uses Google Maps API to match users with others nearby for convenient swapping.
+4. **Stream API Chat:** Seamless in-app messaging for real-time communication between users.
 
-### Our competition:
-The main competitor is Swappy Books, which allows users to swap books in a similar fashion.
+### Backend Highlights:
+1. **Real-Time Database Management:** Firebase ensures fast and reliable storage of book listings, user profiles, and swapping history.
+2. **Geolocation Services:** Matches users based on proximity for localized book swaps.
+3. **Scalable Design:** Designed to handle large user bases with efficient query mechanisms and serverless Firebase backend.
 
-#### Experience with Swappy Books:
-While Swappy Books offers a basic swapping mechanism, it lacks key features that make the process more secure, efficient, and community-focused. The review system on Swappy Books is basic, and the app doesn’t offer a wishlist system or AI-driven recommendations.
+## Target Audience:
+- **Students:** Simplifies textbook swapping, reducing costs for college and school students.
+- **Avid Readers:** Encourages trading fiction/non-fiction books instead of buying new ones.
+- **Eco-Conscious Users:** Appeals to those committed to reducing their carbon footprint.
+- **Local Communities:** Fosters resource sharing within neighborhoods.
 
-#### What makes NextChapter better?
-- **AI Recommendations:** Provides personalized suggestions for users based on past interactions and wishlists.
-- **Sustainability Tracker:** Unique feature promoting environmental awareness by showing users how much they’ve saved in carbon emissions.
-- **Verified Swapper System:** Adds trust and security to the swapping process, encouraging users to engage more frequently.
-- **Frequent Updates:** Offers frequent, high-quality updates, ensuring a modern and responsive UI, unlike Swappy Books which hasn’t been updated in six years.
+## Testing and Deployment
+### **Testing Environments:**
+- Tested across Android versions to ensure compatibility and seamless functionality.
+- Simulated various network conditions to verify the robustness of real-time updates and notifications.
 
-## Main Modules of Our App:
-### 1. Mobile Device Side
-- **Image Upload:** Users can upload pictures of books using the device camera.
-- **Geolocation:** Enables users to swap locally by showing available books nearby.
-- **Notifications:** Real-time notifications for wishlist book availability.
-- **Touchscreen Interface:** Smooth user interaction with swiping functionality to browse books.
+### **User Testing:**
+- Involves collecting feedback from potential users to refine usability and features.
+- Conducted on real Android devices for accurate results.
 
-### 2. Server-Side
-- **User and Book Database:** Stores user profiles, book listings, reviews, and swapping history.
-- **AI Recommendation Engine:** Analyzes user activity and wishlist to suggest books.
-- **Sustainability Tracker:** Calculates and displays carbon footprint savings for users.
+### **Deployment:**
+- Designed for easy deployment via the Google Play Store.
+- Firebase ensures scalable backend infrastructure without additional server management.
 
-### 3. Third Party Services
-- **Geolocation API:** Google Maps API or similar for location-based matching.
-- **AI Model:** Uses a machine learning framework like TensorFlow Lite for recommendations.
+---
 
-## Mobile Innovation:
-- **Geolocation-based Matching:** Matches users based on proximity, making it easier to swap books locally.
-- **AI-Powered Book Recommendations:** Suggests books users are likely to want based on their wishlist and previous swaps.
-- **Touch-Based User Experience:** Uses swipe gestures for navigation and book browsing, designed specifically for mobile interaction.
-- **Camera Integration for Book Listings:** Utilizes the mobile device’s camera to quickly capture and upload images of books, enhancing the mobile experience.
-
-## Testing Our App:
-### Devices:
-We will need access to Android phones for testing the various features, especially geolocation, notifications, and camera functionality. We have access to at least 1 Android device among our team members.
-
-### Testing Environments:
-We’ll test across different Android versions to ensure compatibility and smooth performance.
-
-### User Testing:
-We plan to involve potential users early in the process to get feedback on usability and features.
+NextChapter makes book swapping a seamless, eco-friendly, and user-friendly experience while leveraging cutting-edge mobile and cloud technologies.
