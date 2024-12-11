@@ -20,7 +20,7 @@ NextChapter is a mobile-first Android app that allows users to swap books based 
 ## Tech Stack
 ### **Frontend:**
 - **Jetpack Compose:** Used for building the app's modern, responsive, and declarative UI.
-- **CameraX:** Integrated for capturing and uploading book images directly from the app.
+- **CameraX:** Integrated for capturing and scanning book barcodes directly from the app.
 - **Material3 Design:** Ensures consistency and adherence to modern UI/UX principles.
 
 ### **Backend:**
@@ -35,7 +35,7 @@ NextChapter is a mobile-first Android app that allows users to swap books based 
 
 ## Features
 ### Mobile-Specific Innovations:
-1. **CameraX Integration:** Allows users to quickly capture and upload clear images of books, making listings more visually appealing.
+1. **CameraX Integration:** Allows users to quickly upload clear images of books, making listings more visually appealing, by seamlessly scanning the ISBN from the book barcode.
 2. **Geolocation Matching:** Uses Google Maps API to match users with others nearby for convenient swapping.
 4. **Stream API Chat:** Seamless in-app messaging for real-time communication between users.
 
