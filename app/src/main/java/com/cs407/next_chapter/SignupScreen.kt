@@ -42,6 +42,8 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseUser
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.User
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
 fun SignupScreen(
@@ -55,13 +57,16 @@ fun SignupScreen(
     var fullName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var homeAddress by remember { mutableStateOf("")  }
+    var homeAddress by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
         Row(
@@ -75,7 +80,6 @@ fun SignupScreen(
                 )
             }
         }
-
 
         @Composable
         fun FadeText() {
@@ -110,10 +114,7 @@ fun SignupScreen(
             }
         }
 
-
         FadeText()
-
-
 
         Text(
             text = "Sign up to see book swaps near you",
@@ -129,6 +130,8 @@ fun SignupScreen(
             modifier = Modifier.padding(start = 16.dp)
         )
 
+
+
         TextField(
             value = fullName,
             onValueChange = { fullName = it },
@@ -137,6 +140,7 @@ fun SignupScreen(
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         )
+
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -224,7 +228,6 @@ fun SignupScreen(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(start = 16.dp)
         )
-
 
         TextField(
             value = homeAddress,
@@ -320,6 +323,7 @@ fun SignupScreen(
 
     }
 }
+
 fun connectChatUser(firebaseUser: FirebaseUser) {
     val client = ChatClient.instance()
     val user = User(
@@ -338,4 +342,3 @@ fun connectChatUser(firebaseUser: FirebaseUser) {
         }
     }
 }
-
